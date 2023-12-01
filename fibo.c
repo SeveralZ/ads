@@ -32,6 +32,19 @@ void factorial() {
     printf("Factorial of %d is %d\n", n, top());
 }
 
+void fibonacci();
+
+void fib(int n) {
+    int a = 0, b = 1, nextTerm;
+
+    for (int i = 3; i <= n; i++) {
+        nextTerm = a + b;
+        printf("%d ", nextTerm);
+        a = b;
+        b = nextTerm;
+    }
+}
+
 void fibonacci() {
     int n;
     printf("Enter the number of terms for Fibonacci series: ");
@@ -40,21 +53,16 @@ void fibonacci() {
     if (n < 1) {
         printf("Invalid number of terms\n");
         return;
-    }
-
-    else if (n == 1) {
+    } else if (n == 1) {
         printf("%d\n", 0);
         return;
-    }
-
-    else if (n == 2) {
+    } else if (n == 2) {
         printf("0 1\n");
         return;
-    }
-
-    else {
+    } else {
         printf("0 1 ");
         fib(n - 2);
+        printf("\n");
     }
 }
 
