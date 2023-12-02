@@ -7,6 +7,11 @@ struct TreeNode {
     struct TreeNode* right;
 };
 
+struct StackNode {
+    struct TreeNode* treeNode;
+    struct StackNode* next;
+};
+
 struct TreeNode* createNode(int key) {
     struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
     if (newNode != NULL) {
@@ -78,17 +83,73 @@ struct TreeNode* findNode(struct TreeNode* root, int key) {
     }
 }
 
-void inorderTraversal(struct TreeNode* root) {
-    if (root != NULL) {
-        inorderTraversal(root->left);
-        printf("%d ", root->key);
-        inorderTraversal(root->right);
+void iterativeInorderTraversal(struct TreeNode* root) {
+    struct StackNode* stack = NULL;
+    struct TreeNode* current = root;
+
+    while (current != NULL || stack != NULL) {
+        while (current != NULL) {
+            printf("%d ", current->key);
+            struct StackNode* newNode = (struct StackNode*)malloc(sizeof(struct StackNode));
+            newNode->treeNode = current;
+            newNode->next = stack;
+            stack = newNode;
+            current = current->left;
+        }
+
+        struct StackNode* temp = stack;
+        current = temp->treeNode;
+        stack = temp->next;
+        current = current->right;
     }
+}
+
+void iterativePreorderTraversal(struct TreeNode* root) {
+    if (root == NULL) {
+        return;
+    }
+
+    struct StackNode* stack = NULL;
+    push(&stack, root);
+
+    while (stack != NULL) {
+        struct TreeNode* current = pop(&stack);
+        printf("%d ", current->key);
+
+        if (current->right != NULL) {
+            push(&stack, current->right);
+        }
+
+        if (current->left != NULL) {
+            push(&stack, current->left);
+        }
+    }
+}
+
+void push(struct StackNode** stack, struct TreeNode* treeNode) {
+    struct StackNode* newNode = (struct StackNode*)malloc(sizeof(struct StackNode));
+    if (newNode != NULL) {
+        newNode->treeNode = treeNode;
+        newNode->next = *stack;
+        *stack = newNode;
+    }
+}
+
+struct TreeNode* pop(struct StackNode** stack) {
+    if (*stack == NULL) {
+        return NULL;
+    }
+
+    struct TreeNode* treeNode = (*stack)->treeNode;
+    struct StackNode* temp = *stack;
+    *stack = (*stack)->next;
+    free(temp);
+    return treeNode;
 }
 
 void showTree(struct TreeNode* root) {
     printf("BST: ");
-    inorderTraversal(root);
+    iterativeInorderTraversal(root);
     printf("\n");
 }
 
@@ -135,7 +196,12 @@ int main() {
                 }
                 break;
             case 4:
-                showTree(root);
+                printf("Inorder Traversal: ");
+                iterativeInorderTraversal(root);
+                printf("\n");
+                printf("Preorder Traversal: ");
+                iterativePreorderTraversal(root);
+                printf("\n");
                 break;
             case 5:
                 printf("Exiting the program.\n");
